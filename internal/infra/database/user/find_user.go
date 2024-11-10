@@ -4,10 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"marcioaraujo/pos-auction/configuration/logger"
-	"marcioaraujo/pos-auction/internal/entity/user_entity"
-	"marcioaraujo/pos-auction/internal/internal_error"
-
+	"fullcycle-auction_go/configuration/logger"
+	"fullcycle-auction_go/internal/entity/user_entity"
+	"fullcycle-auction_go/internal/internal_error"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )

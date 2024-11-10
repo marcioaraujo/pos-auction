@@ -3,8 +3,7 @@ package validation
 import (
 	"encoding/json"
 	"errors"
-	"marcioaraujo/pos-auction/configuration/rest_err"
-
+	"fullcycle-auction_go/configuration/rest_err"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"

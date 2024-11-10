@@ -8,8 +8,8 @@ services:
     ports:
       - "8080:8080"
     env_file:
-      - cmd/auction/.env
-    command: sh -c "/auction"
+      - cmd/auction/.env  # Carregar as variáveis do arquivo .env
+    command: /auction  # Já que o ENTRYPOINT no Dockerfile já está definido para /app/auction
     networks:
       - localNetwork
 

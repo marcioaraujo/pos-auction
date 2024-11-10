@@ -1,50 +1,113 @@
-package auction
+package main
 
 import (
 	"context"
-	"marcioaraujo/pos-auction/configuration/logger"
-	"marcioaraujo/pos-auction/internal/entity/auction_entity"
-	"marcioaraujo/pos-auction/internal/internal_error"
+	"fullcycle-auction_go/configuration/database/mongodb"
+	"fullcycle-auction_go/internal/infra/api/web/controller/auction_controller"
+	"fullcycle-auction_go/internal/infra/api/web/controller/bid_controller"
+	"fullcycle-auction_go/internal/infra/api/web/controller/user_controller"
+	"fullcycle-auction_go/internal/infra/database/auction"
+	"fullcycle-auction_go/internal/infra/database/bid"
+	"fullcycle-auction_go/internal/infra/database/user"
+	"fullcycle-auction_go/internal/usecase/auction_usecase"
+	"fullcycle-auction_go/internal/usecase/bid_usecase"
+	"fullcycle-auction_go/internal/usecase/user_usecase"
+	"log"
+	"os"
+	"strconv"
+	"time"
 
+	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type AuctionEntityMongo struct {
-	Id          string                          `bson:"_id"`
-	ProductName string                          `bson:"product_name"`
-	Category    string                          `bson:"category"`
-	Description string                          `bson:"description"`
-	Condition   auction_entity.ProductCondition `bson:"condition"`
-	Status      auction_entity.AuctionStatus    `bson:"status"`
-	Timestamp   int64                           `bson:"timestamp"`
-}
-type AuctionRepository struct {
-	Collection *mongo.Collection
-}
+func main() {
+	ctx := context.Background()
 
-func NewAuctionRepository(database *mongo.Database) *AuctionRepository {
-	return &AuctionRepository{
-		Collection: database.Collection("auctions"),
+	// Carregar as variáveis de ambiente
+	if err := godotenv.Load("cmd/auction/.env"); err != nil {
+		log.Fatal("Error loading .env file")
 	}
-}
 
-func (ar *AuctionRepository) CreateAuction(
-	ctx context.Context,
-	auctionEntity *auction_entity.Auction) *internal_error.InternalError {
-	auctionEntityMongo := &AuctionEntityMongo{
-		Id:          auctionEntity.Id,
-		ProductName: auctionEntity.ProductName,
-		Category:    auctionEntity.Category,
-		Description: auctionEntity.Description,
-		Condition:   auctionEntity.Condition,
-		Status:      auctionEntity.Status,
-		Timestamp:   auctionEntity.Timestamp.Unix(),
-	}
-	_, err := ar.Collection.InsertOne(ctx, auctionEntityMongo)
+	// Estabelecer a conexão com o banco de dados MongoDB
+	databaseConnection, err := mongodb.NewMongoDBConnection(ctx)
 	if err != nil {
-		logger.Error("Error trying to insert auction", err)
-		return internal_error.NewInternalServerError("Error trying to insert auction")
+		log.Fatal(err.Error())
+		return
 	}
 
-	return nil
+	// Inicializar o roteador Gin
+	router := gin.Default()
+
+	// Inicializar os controllers
+	userController, bidController, auctionController := initDependencies(databaseConnection)
+
+	// Rotas
+	router.GET("/auction", auctionController.FindAuctions)
+	router.GET("/auction/:auctionId", auctionController.FindAuctionById)
+	router.POST("/auction", auctionController.CreateAuction)
+	router.GET("/auction/winner/:auctionId", auctionController.FindWinningBidByAuctionId)
+	router.POST("/bid", bidController.CreateBid)
+	router.GET("/bid/:auctionId", bidController.FindBidByAuctionId)
+	router.GET("/user/:userId", userController.FindUserById)
+
+	// Rodar a aplicação na porta 8080
+	go monitorAuctions(databaseConnection) // Iniciar a goroutine para monitorar leilões
+
+	router.Run(":8080")
+}
+
+// Função que inicializa as dependências da aplicação
+func initDependencies(database *mongo.Database) (
+	userController *user_controller.UserController,
+	bidController *bid_controller.BidController,
+	auctionController *auction_controller.AuctionController) {
+
+	auctionRepository := auction.NewAuctionRepository(database)
+	bidRepository := bid.NewBidRepository(database, auctionRepository)
+	userRepository := user.NewUserRepository(database)
+
+	userController = user_controller.NewUserController(
+		user_usecase.NewUserUseCase(userRepository))
+	auctionController = auction_controller.NewAuctionController(
+		auction_usecase.NewAuctionUseCase(auctionRepository, bidRepository))
+	bidController = bid_controller.NewBidController(bid_usecase.NewBidUseCase(bidRepository))
+
+	return
+}
+
+// Função para monitorar e fechar automaticamente os leilões
+func monitorAuctions(database *mongo.Database) {
+	// Leitura da variável de duração de leilão do ambiente
+	duration, err := strconv.Atoi(os.Getenv("AUCTION_DURATION"))
+	if err != nil {
+		duration = 60 // Valor padrão de 60 minutos se a variável não for definida
+	}
+
+	// Monitorar leilões para fechá-los quando o tempo expirar
+	for {
+		// Buscar todos os leilões abertos
+		auctions, err := auction.NewAuctionRepository(database).FindOpenAuctions()
+		if err != nil {
+			log.Printf("Error fetching auctions: %v", err)
+			time.Sleep(30 * time.Second) // Aguardar antes de tentar novamente
+			continue
+		}
+
+		// Verificar e fechar leilões que passaram do tempo
+		for _, auction := range auctions {
+			if time.Now().After(time.Unix(auction.Timestamp, 0).Add(time.Duration(duration) * time.Minute)) {
+				err := auction.NewAuctionRepository(database).CloseAuction(context.Background(), auction)
+				if err != nil {
+					log.Printf("Error closing auction %s: %v", auction.Id, err)
+				} else {
+					log.Printf("Auction %s closed automatically", auction.Id)
+				}
+			}
+		}
+
+		// Aguardar antes de verificar novamente
+		time.Sleep(1 * time.Minute)
+	}
 }

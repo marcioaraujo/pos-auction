@@ -1,7 +1,7 @@
 package rest_err
 
 import (
-	"marcioaraujo/pos-auction/internal/internal_error"
+	"fullcycle-auction_go/internal/internal_error"
 	"net/http"
 )
 

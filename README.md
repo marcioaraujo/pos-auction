@@ -30,4 +30,4 @@ Utilize docker/docker-compose para podermos realizar os testes de sua aplicaçã
 Instruções de uso
 Compilar o container: docker build -t marcioaraujo/pos-auction:1.0 .
 
-<!-- docker run marcioaraujo/pos-stress-test:1.0 run -u http://google.com.br -c 5 -r 10 -->
+docker compose up --build -d

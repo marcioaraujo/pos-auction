@@ -2,9 +2,9 @@ package bid_usecase
 
 import (
 	"context"
-	"marcioaraujo/pos-auction/configuration/logger"
-	"marcioaraujo/pos-auction/internal/entity/bid_entity"
-	"marcioaraujo/pos-auction/internal/internal_error"
+	"fullcycle-auction_go/configuration/logger"
+	"fullcycle-auction_go/internal/entity/bid_entity"
+	"fullcycle-auction_go/internal/internal_error"
 	"os"
 	"strconv"
 	"time"

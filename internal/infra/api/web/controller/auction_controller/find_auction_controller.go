@@ -2,13 +2,12 @@ package auction_controller
 
 import (
 	"context"
-	"marcioaraujo/pos-auction/configuration/rest_err"
-	"marcioaraujo/pos-auction/internal/usecase/auction_usecase"
-	"net/http"
-	"strconv"
-
+	"fullcycle-auction_go/configuration/rest_err"
+	"fullcycle-auction_go/internal/usecase/auction_usecase"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"net/http"
+	"strconv"
 )
 
 func (u *AuctionController) FindAuctionById(c *gin.Context) {
