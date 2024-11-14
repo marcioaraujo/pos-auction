@@ -2,11 +2,12 @@ package auction_controller
 
 import (
 	"context"
-	"fullcycle-auction_go/configuration/rest_err"
-	"fullcycle-auction_go/internal/infra/api/web/validation"
-	"fullcycle-auction_go/internal/usecase/auction_usecase"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/marcioaraujo/pos-auction/configuration/rest_err"
+	"github.com/marcioaraujo/pos-auction/internal/infra/api/web/validation"
+	"github.com/marcioaraujo/pos-auction/internal/usecase/auction_usecase"
 )
 
 type AuctionController struct {

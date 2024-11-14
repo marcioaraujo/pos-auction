@@ -2,20 +2,21 @@ package main
 
 import (
 	"context"
-	"fullcycle-auction_go/configuration/database/mongodb"
-	"fullcycle-auction_go/internal/infra/api/web/controller/auction_controller"
-	"fullcycle-auction_go/internal/infra/api/web/controller/bid_controller"
-	"fullcycle-auction_go/internal/infra/api/web/controller/user_controller"
-	"fullcycle-auction_go/internal/infra/database/auction"
-	"fullcycle-auction_go/internal/infra/database/bid"
-	"fullcycle-auction_go/internal/infra/database/user"
-	"fullcycle-auction_go/internal/usecase/auction_usecase"
-	"fullcycle-auction_go/internal/usecase/bid_usecase"
-	"fullcycle-auction_go/internal/usecase/user_usecase"
+	"log"
+
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/marcioaraujo/pos-auction/configuration/database/mongodb"
+	"github.com/marcioaraujo/pos-auction/internal/infra/api/web/controller/auction_controller"
+	"github.com/marcioaraujo/pos-auction/internal/infra/api/web/controller/bid_controller"
+	"github.com/marcioaraujo/pos-auction/internal/infra/api/web/controller/user_controller"
+	"github.com/marcioaraujo/pos-auction/internal/infra/database/auction"
+	"github.com/marcioaraujo/pos-auction/internal/infra/database/bid"
+	"github.com/marcioaraujo/pos-auction/internal/infra/database/user"
+	"github.com/marcioaraujo/pos-auction/internal/usecase/auction_usecase"
+	"github.com/marcioaraujo/pos-auction/internal/usecase/bid_usecase"
+	"github.com/marcioaraujo/pos-auction/internal/usecase/user_usecase"
 	"go.mongodb.org/mongo-driver/mongo"
-	"log"
 )
 
 func main() {

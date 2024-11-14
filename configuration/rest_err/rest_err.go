@@ -1,8 +1,9 @@
 package rest_err
 
 import (
-	"fullcycle-auction_go/internal/internal_error"
 	"net/http"
+
+	"github.com/marcioaraujo/pos-auction/internal/internal_error"
 )
 
 type RestErr struct {
