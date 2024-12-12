@@ -7,20 +7,20 @@ Toda rotina de criação do leilão e lances já está desenvolvida, entretanto,
 
 Para essa tarefa, você utilizará o go routines e deverá se concentrar no processo de criação de leilão (auction). A validação do leilão (auction) estar fechado ou aberto na rotina de novos lançes (bid) já está implementado.
 
-## Você deverá desenvolver:
+## Você deverá desenvolver
 
 - Uma função que irá calcular o tempo do leilão, baseado em parâmetros previamente definidos em variáveis de ambiente;
 - Uma nova go routine que validará a existência de um leilão (auction) vencido (que o tempo já se esgotou) e que deverá realizar o update, fechando o leilão (auction);
 - Um teste para validar se o fechamento está acontecendo de forma automatizada;
 
-## Dicas:
+## Dicas
 
 - Concentre-se na no arquivo internal/infra/database/auction/create_auction.go, você deverá implementar a solução nesse arquivo;
 - Lembre-se que estamos trabalhando com concorrência, implemente uma solução que solucione isso:
 - Verifique como o cálculo de intervalo para checar se o leilão (auction) ainda é válido está sendo realizado na rotina de criação de bid;
 - Para mais informações de como funciona uma goroutine, clique aqui e acesse nosso módulo de Multithreading no curso Go Expert;
 
-## Entrega:
+## Entrega
 
 - O código-fonte completo da implementação.
 - Documentação explicando como rodar o projeto em ambiente dev.
@@ -38,4 +38,16 @@ docker compose up -d
 
 ```bash
 go test ./internal/infra/database/auction/ -v
+```
+
+### Se tudo ocorrer bem o resultador deve ser semelhante a isto
+
+```bash
+=== RUN   TestMonitorAuction
+=== RUN   TestMonitorAuction/test_monitor_auction
+repo.auctionInterval: 1s
+--- PASS: TestMonitorAuction (1.03s)
+    --- PASS: TestMonitorAuction/test_monitor_auction (1.03s)
+PASS
+ok   fullcycle-auction_go/internal/infra/database/auction (cached)
 ```
