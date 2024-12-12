@@ -1,0 +1,14 @@
+### Requisição 1: GET para listar todos leitões
+GET http://localhost:8080/auction?status=0 HTTP/1.1
+
+### Requisição 2: GET para listar leilão pelo UUID
+GET http://localhost:8080/auction/e6290ceb-769a-4a35-8768-51f3046407cc HTTP/1.1
+
+### Requisição 3: GET para listar leitão vencedor
+GET http://localhost:8080/auction/winner/e6290ceb-769a-4a35-8768-51f3046407cc HTTP/1.1
+
+### Requisição 4: GET para listar oferta
+GET http://localhost:8080/bid/e6290ceb-769a-4a35-8768-51f3046407cc HTTP/1.1
+
+### Requisição 5: GET para listar usuário pelo UUID
+GET http://localhost:8080/user/365fb343-e3d7-48b7-bc35-fa1a4b6a9a94 HTTP/1.1

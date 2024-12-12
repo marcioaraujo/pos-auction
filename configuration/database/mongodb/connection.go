@@ -2,11 +2,10 @@ package mongodb
 
 import (
 	"context"
-	"os"
-
-	"github.com/marcioaraujo/pos-auction/configuration/logger"
+	"fullcycle-auction_go/configuration/logger"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"os"
 )
 
 const (
